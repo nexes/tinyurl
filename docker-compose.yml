@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+    tinyurldb:
+        image: postgres
+        expose:
+            - "5432"
+
+    tinyurlweb:
+        build: .
+        ports:
+            - "8000:8000"
+        depends_on:
+            - "tinyurldb"
+        command: ["./django-migrations.sh", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+        restart: on-failure
+        volumes:
+            - .:/code/

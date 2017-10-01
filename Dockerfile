@@ -1,0 +1,9 @@
+FROM python:3
+ENV PYTHONUNBUFFERED 1
+
+RUN mkdir /code
+WORKDIR /code
+
+ADD . /code
+RUN echo "docker file run" &&\
+    pip install -r requirements.txt
