@@ -62,3 +62,32 @@ class ExpireUrlTestCase(TestCase):
 
         self.assertEqual(get_resp.status_code, 200)
         print('\tReturned correct expiration date: {}\n'.format(get_resp.json()['expiration']))
+
+
+class UsageCountTestCase(TestCase):
+    def setUp(self):
+        no_exp = Client().post('/api/shortner/create/', json.dumps({
+            'url': 'www.google.com'
+        }), content_type='application/json')
+
+        _url = no_exp.json()['url']
+        self.url_hash = _url[_url.rfind('/') + 1:]
+        self.url = '/api/shortner/usage/'
+
+    def test_usage_count(self):
+        client = Client()
+        usage_resp = client.post(self.url, json.dumps({
+            'url': self.url_hash
+        }), content_type='application/json')
+
+        count = usage_resp.json()['count']
+        self.assertEqual(usage_resp.status_code, 200)
+        self.assertEqual(count, 1)
+        print('\tPOST usage status 200, count: {}'.format(count))
+
+        usage_resp = client.get('{}{}/'.format(self.url, self.url_hash))
+
+        count = usage_resp.json()['count']
+        self.assertEqual(usage_resp.status_code, 200)
+        self.assertEqual(count, 1)
+        print('\tGet usage status 200, count: {}'.format(count))

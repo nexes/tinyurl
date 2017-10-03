@@ -126,13 +126,36 @@ class Expiration(View):
 
 
 class Usage(View):
+    """ return or set the click (usage) count of the url
+        GET: returned JSON object {
+            url: the short url,
+            count: the click count
+        }
+        POST: required JSON object {
+            url: the url hash,
+            count: the click count
+        }
+    """
+
     def get(self, request: HttpRequest, url_hash: str):
         try:
             query_url = url.objects.get(url_hash__exact=url_hash)
         except ObjectDoesNotExist:
             return JSONResponse.Respond(status=403, message='Could not find url hash {}'.format(url_hash))
 
-
+        return JSONResponse.Respond(status=200, message='success', count=query_url.usage_count)
 
     def post(self, request: HttpRequest):
-        return JSONResponse.Respond(status=200, message='usage post')
+        try:
+            req_json = json.loads(request.body.decode('UTF-8'))
+        except json.JSONDecodeError:
+            return JSONResponse.Respond(status=403, message='received bad POST request data')
+
+        try:
+            query_url = url.objects.get(url_hash__exact=req_json.get('url'))
+        except ObjectDoesNotExist:
+            return JSONResponse.Respond(status=403, message='Could not find url hash {}'.format(req_json.get('url')))
+
+        query_url.usage_count += 1
+        query_url.save()
+        return JSONResponse.Respond(status=200, message='success', count=query_url.usage_count)
