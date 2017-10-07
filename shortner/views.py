@@ -22,7 +22,8 @@ class CreateURL(View):
         }
         returned JSON object {
             url: the shortened url
-            original: the original url
+            original: the original url,
+            count: the url usage count
             expiration: the expiration date
         }
     """
@@ -34,7 +35,7 @@ class CreateURL(View):
             return JSONResponse.Respond(status=403, message='received bad POST request data')
 
         if json_req.get('url', False) is False:
-            return JSONResponse.Respond(code=403, message='no url found in request')
+            return JSONResponse.Respond(status=403, message='no url found in request')
 
         url_id = uuid.uuid4().time_mid
         while url.objects.filter(url_hash__exact=url_id).exists():
@@ -64,7 +65,8 @@ class CreateURL(View):
         return JSONResponse.Respond(
             status=200,
             message='success',
-            url='localhost/{}'.format(new_url.url_hash),
+            url='localhost:8000/{}'.format(new_url.url_hash),
+            count=0,
             original=new_url.long_name,
             expiration=new_url.expiration_date.isoformat()
         )
