@@ -9,6 +9,7 @@ cmd="$@"
 #     sleep 2
 # done
 
+# stupid Docker hack, I know.
 sleep 5
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
