@@ -32,12 +32,14 @@ try:
             SECRET_KEY = SETTINGS['SECRET_KEY']
             DEBUG = SETTINGS['DEBUG']
             ALLOWED_HOSTS = SETTINGS['ALLOWED_HOSTS']
+            CORS_ORIGIN_WHITELIST = SETTINGS['CORS_ORIGIN_WHITELIST']
 
 except FileNotFoundError:
     print('Settings file not found, trying os env variables', file=sys.stderr)
     SECRET_KEY = os.environ.get('SECRET_KEY', '')
     DEBUG = os.environ.get('DEBUG', '')
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '')
+    CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', '')
 
 
 # Application definition
@@ -45,6 +47,7 @@ except FileNotFoundError:
 INSTALLED_APPS = [
     'shortner.apps.ShortnerConfig',
     'router.apps.RouterConfig',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -82,7 +86,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tinyurl.wsgi.application'
-
 
 # Database for development environment
 DATABASES = {
