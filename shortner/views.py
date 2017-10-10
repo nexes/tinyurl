@@ -145,7 +145,7 @@ class Usage(View):
         except ObjectDoesNotExist:
             return JSONResponse.Respond(status=403, message='Could not find url hash {}'.format(url_hash))
 
-        return JSONResponse.Respond(status=200, message='success', count=query_url.usage_count)
+        return JSONResponse.Respond(status=200, message='success', url=query_url.url_hash, count=query_url.usage_count)
 
     def post(self, request: HttpRequest):
         try:
@@ -161,3 +161,27 @@ class Usage(View):
         query_url.usage_count += 1
         query_url.save()
         return JSONResponse.Respond(status=200, message='success', count=query_url.usage_count)
+
+
+class OriginalUrl(View):
+    """ returns the original url the hash is pointing to
+        returned JSON object {
+            'url': the shorten url,
+            'original': the original url
+        }
+    """
+
+    def get(self, request: HttpRequest, url_hash: str):
+        try:
+            query_url = url.objects.get(url_hash__exact=url_hash)
+        except ObjectDoesNotExist:
+            return JSONResponse.Respond(status=403, message='Could not find url hash {}'.format(url_hash))
+
+        return JSONResponse.Respond(
+            status=200,
+            message='success',
+            url=query_url.url_hash,
+            original=query_url.long_name,
+            count=query_url.usage_count,
+            expiration=query_url.expiration_date.isoformat()
+        )
