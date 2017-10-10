@@ -15,12 +15,14 @@ import sys
 import json
 
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
+SETTINGS = {}
 
 try:
     with open('supersecretprivatesettings.json') as f:
@@ -61,7 +63,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -97,6 +99,11 @@ DATABASES = {
         "PORT": '5432'
     }
 }
+
+if SETTINGS['DEPLOY']:
+    import dj_database_url
+    deploy_db = dj_database_url.config()
+    DATABASES['default'].update(deploy_db)
 
 # Database settings for deployment
 
@@ -138,3 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIR = [
+    os.path.join(BASE_DIR, '../dist')
+]
