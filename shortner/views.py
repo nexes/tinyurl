@@ -65,7 +65,7 @@ class CreateURL(View):
         return JSONResponse.Respond(
             status=200,
             message='success',
-            url='localhost:8000/{}'.format(new_url.url_hash),
+            url=new_url.url_hash,
             count=0,
             original=new_url.long_name,
             expiration=new_url.expiration_date.isoformat()
