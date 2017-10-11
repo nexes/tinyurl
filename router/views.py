@@ -3,6 +3,7 @@ from tinyurl.response import JSONResponse
 from shortner.models import url
 
 from django.views import View
+from django.shortcuts import render
 from django.http import HttpRequest, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -11,7 +12,7 @@ class RouteToIndex(View):
     """ This will serve the static files """
 
     def get(self, request: HttpRequest):
-        return JSONResponse.Respond(status=200, message='what index')
+        return render(request, 'index.html')
 
 
 class RouteToUrl(View):
