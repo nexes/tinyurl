@@ -25,11 +25,13 @@ class CreateUrlTestCase(TestCase):
         self.assertEqual(no_exp.status_code, 200)
         print('\tCreation with default expiration: 200')
         print('\texpiration: {}'.format(no_exp.json()['expiration']))
+        print('\tshort url: {}\n'.format(no_exp.json()['original']))
         print('\tshort url: {}\n'.format(no_exp.json()['url']))
 
         self.assertEqual(with_exp.status_code, 200)
         print('\tCreation with custom expiration: 200')
         print('\texpiration: {}'.format(with_exp.json()['expiration']))
+        print('\tshort url: {}\n'.format(no_exp.json()['original']))
         print('\tshort url: {}\n'.format(with_exp.json()['url']))
 
 

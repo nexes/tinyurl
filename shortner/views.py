@@ -1,3 +1,4 @@
+import re
 import json
 import uuid
 from datetime import date
@@ -11,6 +12,19 @@ from shortner.models import url
 
 
 class CreateURL(View):
+    """ This will parse and check for a valid url """
+    def _parse_url(self, url_check: str):
+        url_string = ''
+        # just a quick and dirty check for http://
+        if not re.search(r'^(https?:\/\/)', url_check, re.IGNORECASE):
+            url_string += 'http://'
+
+            if not re.search(r'^(www.)', url_check, re.IGNORECASE):
+                url_string += 'www.'
+
+        return "{}{}".format(url_string, url_check.lower())
+
+
     """ Creates a small url from the original url sent
         required JSON object {
             url: the original url
@@ -27,7 +41,6 @@ class CreateURL(View):
             expiration: the expiration date
         }
     """
-
     def post(self, request: HttpRequest):
         try:
             json_req = json.loads(request.body.decode('UTF-8'))
@@ -56,7 +69,7 @@ class CreateURL(View):
             except ValueError:
                 expiration = date(year=today.year + 1, month=today.month, day=today.day)
 
-        new_url.long_name = json_req.get('url', '')
+        new_url.long_name = self._parse_url(json_req.get('url', ''))
         new_url.url_hash = url_id
         new_url.usage_count = 0
         new_url.expiration_date = expiration
